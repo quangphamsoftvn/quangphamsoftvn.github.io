@@ -4,7 +4,13 @@ language: node_js
 node_js:
    - node # will use latest node
 
+
+branches:
+   only:
+      - master # will only build for master branch commits
+
 before_script: # commands to run before the build step
+   - cd ./angular && npm install -g --silent firebase-tools # installs firebase to run firebase deploy
     - cd ./angular && npm install -g --silent @angular/cli
 
 script: # the build step
