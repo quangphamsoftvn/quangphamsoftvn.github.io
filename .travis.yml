@@ -8,14 +8,14 @@ branches:
       - master # will only build for master branch commits
 
 before_script:
-   - cd ./angular && npm install -g --silent firebase-tools # installs firebase to run firebase deploy
-   - cd ./angular && npm install -g --silent @angular/cli
+   - npm install -g --silent firebase-tools # installs firebase to run firebase deploy
+   - npm install -g --silent @angular/cli
 
 script:
-   - cd ./angular &&  ng build --prod
+   - ng build --prod
 
 after_success:
-  - cd ./angular &&  firebase deploy --token $FIREBASE_TOKEN --non-interactive # firebase deploy after angular-cli build
+  - firebase deploy --token $FIREBASE_TOKEN --non-interactive # firebase deploy after angular-cli build
 
 notifications:
   email:
