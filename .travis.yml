@@ -12,10 +12,10 @@ before_script:
    - cd ./angular && npm install -g --silent @angular/cli
 
 script:
-   - ng build --prod
+   - cd ./angular &&  ng build --prod
 
 after_success:
-  - firebase deploy --token $FIREBASE_TOKEN --non-interactive # firebase deploy after angular-cli build
+  - cd ./angular &&  firebase deploy --token $FIREBASE_TOKEN --non-interactive # firebase deploy after angular-cli build
 
 notifications:
   email:
