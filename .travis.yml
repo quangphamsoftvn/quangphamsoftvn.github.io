@@ -6,7 +6,9 @@ node_js:
 branches:
    only:
       - master # will only build for master branch commits
+     # - /^greenkeeper/.*$/
 
+      
 before_script:
    - npm install -g --silent firebase-tools # installs firebase to run firebase deploy
    - npm install -g --silent @angular/cli
@@ -15,8 +17,8 @@ script:
    - ng build --prod
 
 after_success:
-  - firebase deploy --token $FIREBASE_TOKEN --non-interactive # firebase deploy after angular-cli build
-
+  # - firebase deploy --token $FIREBASE_TOKEN --non-interactive # firebase deploy after angular-cli build
+  - test $TRAVIS_BRANCH = "master" && test $TRAVIS_PULL_REQUEST = "false" && firebase deploy --token $FIREBASE_TOKEN --non-interactive
 notifications:
   email:
     on_failure: change
