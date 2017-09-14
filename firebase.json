@@ -1,0 +1,9 @@
+{
+    "hosting": {
+        "public": "angular/dist",
+        "rewrites": [{
+            "source": "**",
+            "destination": "/index.html"
+        }]
+    }
+}
