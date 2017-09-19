@@ -24,6 +24,9 @@ export class AppComponent {
 
   canvas: any = null;
 
+  selectedObject: any = null;
+  numberseat: any;
+
   add() {
 
     var red = new fabric.Rect({
@@ -74,7 +77,7 @@ export class AppComponent {
 
 
 
-     this.canvas = this.__canvas = new fabric.Canvas('c');
+    this.canvas = this.__canvas = new fabric.Canvas('c');
 
     // var red = new fabric.Rect({
 
@@ -96,53 +99,55 @@ export class AppComponent {
 
     fabric.Object.prototype.transparentCorners = false;
 
-  //  this.canvas.add(red, blue, green);
+    //  this.canvas.add(red, blue, green);
 
 
 
-// lam mo`
+    // lam mo`
 
-  this.canvas.on({
+    this.canvas.on({
+      'object:selected': (evn) => {
+        this.selectedObject = evn.target;
+      },
+      'object:moving': function (e) {
 
-    'object:moving': function(e) {
+        console.log('object:moving :', e);
 
-      console.log('object:moving :', e);
+        e.target.opacity = 0.5;
 
-      e.target.opacity = 0.5;
+      },
 
-    },
+      'object:modified': function (e) {
 
-    'object:modified': function(e) {
+        console.log('object:modified :', e);
 
-      console.log('object:modified :', e);
+      },
 
-    },
+      'mouse:up': function (e) {
 
-    'mouse:up': function(e) {
+        console.log('mouse:up :', e);
 
-      console.log('mouse:up :', e);
+      },
 
-    },
+      'mouse:down': function (e) {
 
-    'mouse:down': function(e) {
+        console.log('mouse:down :', e);
 
-      console.log('mouse:down :', e);
+      },
 
-    },
+      'mouse:move': function (e) {
 
-    'mouse:move': function(e) {
+        console.log('mouse:move :', e);
 
-      console.log('mouse:move :', e);
+      },
 
-    },
+      'mouse:dblclick': function (e) {
 
-    'mouse:dblclick': function(e) {
+        console.log('mouse:dblclick :', e);
 
-      console.log('mouse:dblclick :', e);
+      }
 
-    } 
-
-  });
+    });
 
 
 
@@ -162,7 +167,7 @@ export class AppComponent {
 
   addShape() {
 
-    var circle =   new fabric.Circle({
+    var circle = new fabric.Circle({
 
       // left: 80,
 
@@ -192,63 +197,63 @@ export class AppComponent {
 
       originY: 'center'
 
-    }); 
+    });
 
-    let listItem = [ circle, text,
-
-    
-
-      ];
-
-    var items = 6;
-
-    for(var i = 0; i < items; i++) {
-
-        var x0 = -25, y0 =-25, r = 100;
-
-        var x = x0 + r * Math.cos(2 * Math.PI * i / items);
-
-        var y = y0 + r * Math.sin(2 * Math.PI * i / items);    
-
-        var child1 =   new fabric.Circle({
-
-          left: x,
-
-          top: y,
-
-          strokeWidth: 5,
-
-          radius: 25,
-
-          fill: '#fff',
-
-          stroke: '#666'
-
-        });
-
-        let ix = i+1+'';
+    let listItem = [circle, text,
 
 
 
-        var text1 = new fabric.Text(ix, {
+    ];
 
-          fontSize: 30,
+    var items = this.numberseat;
 
-          left: x+15,
+    for (var i = 0; i < items; i++) {
 
-          top: y+15
+      var x0 = -25, y0 = -25, r = 100;
 
-        }); 
+      var x = x0 + r * Math.cos(2 * Math.PI * i / items);
+
+      var y = y0 + r * Math.sin(2 * Math.PI * i / items);
+
+      var child1 = new fabric.Circle({
+
+        left: x,
+
+        top: y,
+
+        strokeWidth: 5,
+
+        radius: 25,
+
+        fill: '#fff',
+
+        stroke: '#666'
+
+      });
+
+      let ix = i + 1 + '';
 
 
 
-        listItem.push(child1);
+      var text1 = new fabric.Text(ix, {
 
-        listItem.push(text1);
+        fontSize: 30,
+
+        left: x + 15,
+
+        top: y + 15
+
+      });
+
+
+
+      listItem.push(child1);
+
+      listItem.push(text1);
 
     }
 
-   
+
 
     var group = new fabric.Group(listItem, {
 
@@ -272,20 +277,25 @@ export class AppComponent {
 
   save() {
 
-    let data =  JSON.stringify(this.canvas);
+    let data = JSON.stringify(this.canvas);
 
     console.log('json data : ', data);
 
-    localStorage.setItem('data',data);
+    localStorage.setItem('data', data);
 
   }
 
-  load () {
+  load() {
 
     let data = JSON.parse(localStorage.getItem('data'));
 
     this.canvas.loadFromJSON(data);
 
+  }
+
+
+  Delete() {
+    this.canvas.remove(this.selectedObject);
   }
 
 }
