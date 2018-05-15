@@ -25,7 +25,7 @@ export class AppComponent {
   canvas: any = null;
 
   selectedObject: any = null;
-  numberseat: any;
+  numberseat: any = 4;
 
   add() {
 
@@ -107,7 +107,9 @@ export class AppComponent {
 
     this.canvas.on({
       'object:selected': (evn) => {
+        console.log('selected ');
         this.selectedObject = evn.target;
+        console.log('this.selectedObject : ', this.selectedObject);
       },
       'object:moving': function (e) {
 
@@ -148,11 +150,52 @@ export class AppComponent {
       }
 
     });
+    var previous_scaleY, previous_scaleX, previous_left, previous_top, lockScalingX;
+    this.canvas.on('object:scaling', function (event) {
+      var el = event.target;
+      if (el && (el.height * el.scaleX) > 10 && (el.left + (el.width * el.scaleX)) < this.canvas.width && (el.top + (el.height * el.scaleY)) < this.canvas.height) {
+        previous_scaleY = el.scaleY;
+        previous_scaleX = el.scaleX;
+        previous_left = el.left;
+        previous_top = el.top;
+      }
+      if (el && (el.height * el.scaleX) < 10) {
+        el.left = previous_left;
+        el.top = previous_top;
+        el.scaleX = previous_scaleX;
+        el.scaleY = previous_scaleY;
+        //  el.lockScalingX = true;
+        el.lockScalingY = true;
+        this.canvas.renderAll();
+      }
+      if (el && (el.left + (el.width * el.scaleX)) > this.canvas.width || (el.top + (el.height * el.scaleY)) > this.canvas.height) {
+        console.log('mOVINGGGGGGGGGGGGG');
+        el.left = previous_left;
+        el.top = previous_top;
+        console.log('Scale X:' + el.scaleX);
+        console.log('Scale Y:' + el.scaleY);
+        console.log('width:' + el.width);
+        console.log('Height:' + el.height);
 
+        console.log('Previous Y: ' + previous_scaleY);  // PREVIOUS SCALE X & Y WILL COME FROM MOUSE DOWN EVENT
+        el.scaleX = previous_scaleX;
+        el.scaleY = previous_scaleY;
+        this.canvas.renderAll();
 
+      }
 
+    });
 
+    // this.canvas.observe('mouse:up', function (e) {
+    //   // var activeObject = e.target;
+    //   // activeObject.lockScalingX = false;  // this will connect with object scalling event
+    //   // activeObject.lockScalingY = false;
+    // });
 
+    // this.canvas.getObjects()[0].selectable = true;
+    // this.canvas.renderAll();
+
+    this.canvas.backgroundcolor = '#c2c7cf';
 
 
     this.addShape();
@@ -216,7 +259,7 @@ export class AppComponent {
       var y = y0 + r * Math.sin(2 * Math.PI * i / items);
 
       var child1 = new fabric.Circle({
-
+        id: i,
         left: x,
 
         top: y,
@@ -261,7 +304,7 @@ export class AppComponent {
 
       top: 100,
 
-      angle: -10
+      angle: 0
 
     });
 
@@ -298,5 +341,67 @@ export class AppComponent {
     this.canvas.remove(this.selectedObject);
   }
 
+
+  SelectItem() {
+    this.canvas.getObjects().forEach((item) => {
+      item._objects.forEach((itemObj) => {
+        if (itemObj.id === 1) {
+          console.log('o : ', item);
+          this.canvas.setActiveObject(itemObj);
+        }
+      });
+
+    });
+  }
+
+
+  // circleTablePositionGenerator(_ref) {
+
+
+
+  //   var id = 1,
+  //     table_r = 2,
+  //     unitCount = 3,
+  //     chairWidth = 2;
+
+  //   var angularSeparation = 360 / unitCount;
+  //   var tableWithPadding = table_r + chairWidth / 2;
+
+  //   return _.times(unitCount, function (index) {
+  //     var seatAngle = angularSeparation * index * Math.PI / 180;
+
+  //     return {
+  //       id: id + ':' + (index + 1),
+  //       x: tableWithPadding * Math.sin(seatAngle),
+  //       y: -tableWithPadding * Math.cos(seatAngle)
+  //     };
+  //   });
+  // }
+
+  ZoomIn() {
+    this.canvas.setZoom(this.canvas.getZoom() * 1.1);
+    this.canvas.renderAll();
+  }
+  ZoomOut() {
+    this.canvas.setZoom(this.canvas.getZoom() * 0.9);
+    this.canvas.renderAll();
+  }
+  ZoomReset() {
+    this.canvas.setZoom(1);
+    this.canvas.renderAll();
+  }
+
+  changeWidth() {
+    this.canvas.setWidth(400);
+    this.canvas.renderAll();
+    this.resizeCanvas(800, 1000);
+  }
+
+  resizeCanvas(width, height) {
+    this.canvas.backgroundImage.scaleToWidth(width);
+    this.canvas.backgroundImage.scaleToHeight(height);
+    this.canvas.setDimensions({ width: width, height: height });
+    this.canvas.renderAll();
+  }
 }
 
